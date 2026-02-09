@@ -1,0 +1,8 @@
+/**/.*
+/**/.*/
+!/.gitignore
+!/.github
+!/.mvn
+!/.mvn/**
+target
+**/generated/
