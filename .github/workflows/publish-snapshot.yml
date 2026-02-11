@@ -30,10 +30,20 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
 
+      - name: Select Maven command
+        id: maven_cmd
+        run: |
+          if [[ -x "./mvnw" && -f "./.mvn/wrapper/maven-wrapper.properties" ]]; then
+            echo "cmd=./mvnw" >> "$GITHUB_OUTPUT"
+          else
+            echo "cmd=mvn" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Verify snapshot version
         id: snapshot_version
         run: |
-          VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          MAVEN_CMD="${{ steps.maven_cmd.outputs.cmd }}"
+          VERSION=$($MAVEN_CMD help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "Detected version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           if [[ "$VERSION" != *-SNAPSHOT ]]; then
@@ -47,11 +57,12 @@ jobs:
           CURRENT_VERSION="${{ steps.snapshot_version.outputs.version }}"
           PREV_VERSION=""
           BEFORE_SHA="${{ github.event.before }}"
+          MAVEN_CMD="${{ steps.maven_cmd.outputs.cmd }}"
 
           if [[ -n "$BEFORE_SHA" && "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then
             if git cat-file -e "${BEFORE_SHA}:pom.xml" 2>/dev/null; then
               git show "${BEFORE_SHA}:pom.xml" > /tmp/previous-pom.xml
-              PREV_VERSION=$(./mvnw -f /tmp/previous-pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout || true)
+              PREV_VERSION=$($MAVEN_CMD -f /tmp/previous-pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout || true)
             fi
           fi
 
@@ -60,8 +71,9 @@ jobs:
       - name: Read snapshot metadata before deploy
         id: metadata_before
         run: |
-          GROUP_ID=$(./mvnw help:evaluate -Dexpression=project.groupId -q -DforceStdout)
-          ARTIFACT_ID=$(./mvnw help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
+          MAVEN_CMD="${{ steps.maven_cmd.outputs.cmd }}"
+          GROUP_ID=$($MAVEN_CMD help:evaluate -Dexpression=project.groupId -q -DforceStdout)
+          ARTIFACT_ID=$($MAVEN_CMD help:evaluate -Dexpression=project.artifactId -q -DforceStdout)
           VERSION="${{ steps.snapshot_version.outputs.version }}"
           GROUP_PATH="${GROUP_ID//./\/}"
           METADATA_URL="https://central.sonatype.com/repository/maven-snapshots/${GROUP_PATH}/${ARTIFACT_ID}/${VERSION}/maven-metadata.xml"
@@ -73,10 +85,14 @@ jobs:
           echo "last_updated=$LAST_UPDATED" >> $GITHUB_OUTPUT
 
       - name: Build and test
-        run: ./mvnw --batch-mode clean verify
+        run: |
+          MAVEN_CMD="${{ steps.maven_cmd.outputs.cmd }}"
+          $MAVEN_CMD --batch-mode -U clean verify
 
       - name: Deploy snapshot
-        run: ./mvnw --batch-mode -DskipTests -Dgpg.skip=true deploy
+        run: |
+          MAVEN_CMD="${{ steps.maven_cmd.outputs.cmd }}"
+          $MAVEN_CMD --batch-mode -U -DskipTests -Dgpg.skip=true deploy
         env:
           MAVEN_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

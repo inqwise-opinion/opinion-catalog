@@ -9,6 +9,9 @@ import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import com.google.common.base.MoreObjects;
 
+/**
+ * Data object describing a catalog service package.
+ */
 @DataObject
 public class ServicePackage implements ServicePackageIdentifiable {
 
@@ -34,21 +37,44 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		this.maxAccountUsers = builder.maxAccountUsers;
 	}
 
+	/**
+	 * JSON field names used for serialization.
+	 */
 	public static class Keys {
+		/** Identifier field. */
 		public static final String ID = "id";
+		/** Name field. */
 		public static final String NAME = "name";
+		/** Product id field. */
 		public static final String PRODUCT_ID = "product_id";
+		/** Creation timestamp field. */
 		public static final String CREATED_AT = "created_at";
+		/** Description field. */
 		public static final String DESCRIPTION = "description";
+		/** Default flag field. */
 		public static final String IS_DEFAULT = "is_default";
+		/** Default usage period field. */
 		public static final String DEFAULT_USAGE_PERIOD = "default_usage_period";
+		/** Amount field. */
 		public static final String AMOUNT = "amount";
+		/** Max account users field. */
 		public static final String MAX_ACCOUNT_USERS = "max_account_users";
+
+		private Keys() {
+		}
 	}
 
+	/**
+	 * Creates an empty service package instance.
+	 */
 	public ServicePackage() {
 	}
 
+	/**
+	 * Creates a service package from its JSON representation.
+	 *
+	 * @param json source JSON object.
+	 */
 	public ServicePackage(JsonObject json) {
 		id = json.getInteger(Keys.ID);
 		name = json.getString(Keys.NAME);
@@ -63,44 +89,90 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		maxAccountUsers = json.getInteger(Keys.MAX_ACCOUNT_USERS);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer getId() {
 		return id;
 	}
 
+	/**
+	 * Gets the package name.
+	 *
+	 * @return package name.
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer getProductId() {
 		return productId;
 	}
 
+	/**
+	 * Gets the creation timestamp.
+	 *
+	 * @return creation timestamp.
+	 */
 	public LocalDateTime getCreatedAt() {
 		return createdAt;
 	}
 
+	/**
+	 * Gets the package description.
+	 *
+	 * @return description.
+	 */
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * Indicates whether this package is the default selection.
+	 *
+	 * @return {@code true} when this package is default.
+	 */
 	public Boolean getIsDefault() {
 		return isDefault;
 	}
 
+	/**
+	 * Gets the default usage period in days.
+	 *
+	 * @return default usage period.
+	 */
 	public Integer getDefaultUsagePeriod() {
 		return defaultUsagePeriod;
 	}
 
+	/**
+	 * Gets the package amount.
+	 *
+	 * @return amount.
+	 */
 	public Integer getAmount() {
 		return amount;
 	}
 
+	/**
+	 * Gets the maximum number of account users supported by the package.
+	 *
+	 * @return maximum account users.
+	 */
 	public Integer getMaxAccountUsers() {
 		return maxAccountUsers;
 	}
 
+	/**
+	 * Serializes the package into JSON.
+	 *
+	 * @return JSON representation.
+	 */
 	public JsonObject toJson() {
 		var json = new JsonObject();
 		if (null != id) {
@@ -133,14 +205,28 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		return json;
 	}
 
+	/**
+	 * Creates an empty builder.
+	 *
+	 * @return builder instance.
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	/**
+	 * Creates a builder pre-populated from an existing package.
+	 *
+	 * @param servicePackage source package.
+	 * @return builder instance.
+	 */
 	public static Builder builderFrom(ServicePackage servicePackage) {
 		return new Builder(servicePackage);
 	}
 
+	/**
+	 * Builder for {@link ServicePackage}.
+	 */
 	public static final class Builder {
 		private Integer id;
 		private String name;
@@ -167,51 +253,110 @@ public class ServicePackage implements ServicePackageIdentifiable {
 			this.maxAccountUsers = servicePackage.maxAccountUsers;
 		}
 
+		/**
+		 * Sets the package id.
+		 *
+		 * @param id package id.
+		 * @return current builder.
+		 */
 		public Builder withId(Integer id) {
 			this.id = id;
 			return this;
 		}
 
+		/**
+		 * Sets the package name.
+		 *
+		 * @param name package name.
+		 * @return current builder.
+		 */
 		public Builder withName(String name) {
 			this.name = name;
 			return this;
 		}
 
+		/**
+		 * Sets the product id.
+		 *
+		 * @param productId product id.
+		 * @return current builder.
+		 */
 		public Builder withProductId(Integer productId) {
 			this.productId = productId;
 			return this;
 		}
 
+		/**
+		 * Sets the creation timestamp.
+		 *
+		 * @param createdAt creation timestamp.
+		 * @return current builder.
+		 */
 		public Builder withCreatedAt(LocalDateTime createdAt) {
 			this.createdAt = createdAt;
 			return this;
 		}
 
+		/**
+		 * Sets the description.
+		 *
+		 * @param description package description.
+		 * @return current builder.
+		 */
 		public Builder withDescription(String description) {
 			this.description = description;
 			return this;
 		}
 
+		/**
+		 * Sets default package flag.
+		 *
+		 * @param isDefault default flag.
+		 * @return current builder.
+		 */
 		public Builder withIsDefault(Boolean isDefault) {
 			this.isDefault = isDefault;
 			return this;
 		}
 
+		/**
+		 * Sets default usage period.
+		 *
+		 * @param defaultUsagePeriod usage period in days.
+		 * @return current builder.
+		 */
 		public Builder withDefaultUsagePeriod(Integer defaultUsagePeriod) {
 			this.defaultUsagePeriod = defaultUsagePeriod;
 			return this;
 		}
 
+		/**
+		 * Sets the amount.
+		 *
+		 * @param amount package amount.
+		 * @return current builder.
+		 */
 		public Builder withAmount(Integer amount) {
 			this.amount = amount;
 			return this;
 		}
 
+		/**
+		 * Sets the maximum account users.
+		 *
+		 * @param maxAccountUsers max account users.
+		 * @return current builder.
+		 */
 		public Builder withMaxAccountUsers(Integer maxAccountUsers) {
 			this.maxAccountUsers = maxAccountUsers;
 			return this;
 		}
 
+		/**
+		 * Builds a {@link ServicePackage} instance.
+		 *
+		 * @return built package.
+		 */
 		public ServicePackage build() {
 			return new ServicePackage(this);
 		}

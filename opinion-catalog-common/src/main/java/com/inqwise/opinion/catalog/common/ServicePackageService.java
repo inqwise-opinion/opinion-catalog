@@ -8,7 +8,14 @@ import io.vertx.codegen.annotations.ProxyGen;
  */
 @ProxyGen
 public interface ServicePackageService {
+	/**
+	 * Event-bus service name.
+	 */
 	String SERVICE_NAME = "servicepackage-eb-service";
+
+	/**
+	 * Event-bus service address.
+	 */
 	String SERVICE_ADDRESS = "service.servicepackage";
 	
 }

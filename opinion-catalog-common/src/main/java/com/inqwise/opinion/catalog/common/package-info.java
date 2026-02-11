@@ -1,3 +1,6 @@
+/**
+ * Shared DTOs and service contracts for the Opinion Catalog modules.
+ */
 @ModuleGen(name = "opinion-catalog-common", groupPackage = "com.inqwise.opinion.catalog.common")
 package com.inqwise.opinion.catalog.common;
 
