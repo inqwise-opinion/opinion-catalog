@@ -26,6 +26,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.inqwise.opinion</groupId>
+			<artifactId>opinion-catalog-service-package</artifactId>
+			<version>${project.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.inqwise.opinion</groupId>
 			<artifactId>opinion-catalog-common</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>

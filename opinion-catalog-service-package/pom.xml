@@ -11,10 +11,10 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>opinion-catalog</artifactId>
+	<artifactId>opinion-catalog-service-package</artifactId>
 	<packaging>jar</packaging>
-	<name>Opinion Catalog Service</name>
-	<description>Read-oriented HTTP service for shared catalog items in the Opinion platform.</description>
+	<name>Opinion Catalog Service Package</name>
+	<description>Catalog definitions and helpers for service package items.</description>
 
 	<properties>
 		<vertx.verticle>com.inqwise.opinion.catalog.servicepackage.ServicePackageVerticle</vertx.verticle>
@@ -43,7 +43,15 @@
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
+			<artifactId>vertx-mysql-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.vertx</groupId>
 			<artifactId>vertx-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-sql-client-templates</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
