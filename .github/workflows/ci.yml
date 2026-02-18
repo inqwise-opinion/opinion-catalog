@@ -107,7 +107,7 @@ jobs:
         run: mvn clean compile package -B
 
       - name: Generate sources and javadocs
-        run: mvn source:jar javadoc:jar -B
+        run: mvn package source:jar javadoc:jar -DskipTests=true -B -U
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v6
