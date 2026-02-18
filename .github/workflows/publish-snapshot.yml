@@ -61,25 +61,7 @@ jobs:
           if [[ -n "$BEFORE_SHA" && "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then
             if git cat-file -e "${BEFORE_SHA}:pom.xml" 2>/dev/null; then
               PREV_VERSION=$(
-                git show "${BEFORE_SHA}:pom.xml" | python3 -c '
-import sys
-import xml.etree.ElementTree as ET
-
-xml = sys.stdin.read()
-if not xml.strip():
-    print("")
-    raise SystemExit(0)
-
-root = ET.fromstring(xml)
-if root.tag.startswith("{"):
-    ns_uri = root.tag.split("}", 1)[0][1:]
-    ns = {"m": ns_uri}
-    node = root.find("m:version", ns)
-else:
-    node = root.find("version")
-
-print((node.text or "").strip() if node is not None else "")
-' 2>/dev/null || true
+                git show "${BEFORE_SHA}:pom.xml" | python3 -c 'import sys,xml.etree.ElementTree as ET; xml=sys.stdin.read(); root=ET.fromstring(xml) if xml.strip() else None; ns={"m":root.tag.split("}",1)[0][1:]} if (root is not None and root.tag.startswith("{")) else None; node=(root.find("m:version",ns) if ns else (root.find("version") if root is not None else None)); print((node.text or "").strip() if node is not None else "")' 2>/dev/null || true
               )
             fi
           fi
