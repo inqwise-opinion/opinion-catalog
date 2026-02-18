@@ -78,7 +78,7 @@ jobs:
         run: mvn clean compile package -DskipTests=true -B
 
       - name: Generate Javadocs
-        run: mvn javadoc:javadoc -B -U
+        run: mvn package javadoc:javadoc -DskipTests=true -B -U
 
   build-and-publish:
     name: Build and Publish
