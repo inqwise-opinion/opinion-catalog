@@ -24,6 +24,16 @@ Additional conventions for agents are listed below. Architecture and dataflow li
 - Colon paths are not allowed with OpenApiRouter; avoid `:` in OpenAPI paths.
 - Success codes: `201` for create with response body, `204` for mutations without body, `200` for reads.
 - Error response uses `#/components/schemas/Error`.
+- OpenAPI contracts for service APIs should live under `src/main/resources/contracts/`.
+- Shared OpenAPI schemas should live under `src/main/resources/schemas/`.
+- For runtime-loaded contracts in Vert.x OpenAPI router, prefer internal `#/components/schemas/*` references; external `$ref` files may fail to resolve.
+
+## OpenAPI Router Conventions
+
+- Each service module should provide a dedicated `*OpenApiRouterBuilder` class that owns OpenAPI contract loading and `operationId` handler binding.
+- Verticles should inject that router builder and call `createRouter()` before creating/listening the HTTP server.
+- Router handlers should bind by `operationId` via `routerBuilder.getRoute("<operationId>").addHandler(...)`.
+- Service contracts should use module-local names such as `src/main/resources/contracts/<module>-contract.yml`.
 
 ## DTO/JSON Conventions
 
@@ -52,6 +62,7 @@ Additional conventions for agents are listed below. Architecture and dataflow li
 
 - Run `./mvnw javadoc:javadoc -B` to validate doclint.
 - Run scoped tests for touched modules (e.g., `./mvnw -pl opinion-catalog test`).
+- Maven commands in CI/workflows that depend on snapshots should include `-U`.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

@@ -1,0 +1,204 @@
+openapi: 3.0.3
+info:
+  title: ServicePackage Contract
+  version: 1.0.0
+  description: OpenAPI contract for ServicePackage endpoints.
+paths:
+  /status:
+    get:
+      operationId: status
+      summary: Health status endpoint
+      tags:
+        - service-package
+      responses:
+        "200":
+          description: Service is reachable.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /sony/system:
+    get:
+      operationId: sonySystem
+      summary: Sony Bravia system compatibility endpoint
+      tags:
+        - service-package
+      responses:
+        "200":
+          description: Service is reachable.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /service-package:
+    get:
+      operationId: get
+      summary: Retrieves a service package.
+      tags:
+        - service-package
+      parameters:
+        - in: query
+          name: service_package_id
+          schema:
+            type: integer
+            format: int32
+          required: false
+        - in: query
+          name: product_id
+          schema:
+            type: integer
+            format: int32
+          required: false
+      responses:
+        "200":
+          description: Service package found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServicePackage"
+        "404":
+          description: Service package not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      operationId: modify
+      summary: Modifies a service package.
+      tags:
+        - service-package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServicePackageModifyRequest"
+      responses:
+        "204":
+          description: Service package modified.
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /service-packages:
+    get:
+      operationId: findByProduct
+      summary: Retrieves service packages by product.
+      tags:
+        - service-package
+      parameters:
+        - in: query
+          name: product_id
+          schema:
+            type: integer
+            format: int32
+          required: true
+        - in: query
+          name: include_non_active
+          schema:
+            type: integer
+            format: int32
+            default: 0
+          required: false
+      responses:
+        "200":
+          description: Matching service packages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ServicePackage"
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    ServicePackageModifyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        service_package_id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        product_id:
+          type: integer
+          format: int64
+        amount:
+          type: number
+          format: double
+        description:
+          type: string
+        default_usage_period:
+          type: integer
+          format: int32
+    ServicePackage:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        product_id:
+          type: integer
+          format: int32
+        created_at:
+          type: string
+          format: date-time
+        description:
+          type: string
+        is_default:
+          type: boolean
+        default_usage_period:
+          type: integer
+          format: int32
+        amount:
+          type: integer
+          format: int32
+        max_account_users:
+          type: integer
+          format: int32
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - detail
+        - status
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        status:
+          type: integer
+          format: int32

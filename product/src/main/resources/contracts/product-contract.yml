@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Product Contract
+  version: 1.0.0
+  description: OpenAPI contract for Product endpoints.
+paths:
+  /status:
+    get:
+      operationId: status
+      summary: Health status endpoint
+      tags:
+        - product
+      responses:
+        "200":
+          description: Service is reachable.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /product:
+    get:
+      operationId: get
+      summary: Retrieves a product by id.
+      tags:
+        - product
+      parameters:
+        - in: query
+          name: product_id
+          schema:
+            type: integer
+            format: int32
+          required: true
+      responses:
+        "200":
+          description: Product found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /products:
+    get:
+      operationId: findAll
+      summary: Retrieves all products.
+      tags:
+        - product
+      responses:
+        "200":
+          description: Product list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        "500":
+          description: Internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Product:
+      type: object
+      additionalProperties: false
+      properties:
+        product_id:
+          type: integer
+          format: int32
+        product_name:
+          type: string
+        description:
+          type: string
+        feedback_caption:
+          type: string
+        feedback_short_caption:
+          type: string
+        support_email:
+          type: string
+        no_reply_email:
+          type: string
+        admin_email:
+          type: string
+        sales_email:
+          type: string
+        contact_us_email:
+          type: string
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - detail
+        - status
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        status:
+          type: integer
+          format: int32

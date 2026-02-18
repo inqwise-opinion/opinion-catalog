@@ -20,6 +20,7 @@ public class ServicePackage implements ServicePackageIdentifiable {
 	private Integer productId;
 	private LocalDateTime createdAt;
 	private String description;
+	private Boolean isActive;
 	private Boolean isDefault;
 	private Integer defaultUsagePeriod;
 	private Integer amount;
@@ -31,6 +32,7 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		this.productId = builder.productId;
 		this.createdAt = builder.createdAt;
 		this.description = builder.description;
+		this.isActive = builder.isActive;
 		this.isDefault = builder.isDefault;
 		this.defaultUsagePeriod = builder.defaultUsagePeriod;
 		this.amount = builder.amount;
@@ -51,6 +53,8 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		public static final String CREATED_AT = "created_at";
 		/** Description field. */
 		public static final String DESCRIPTION = "description";
+		/** Active flag field. */
+		public static final String IS_ACTIVE = "is_active";
 		/** Default flag field. */
 		public static final String IS_DEFAULT = "is_default";
 		/** Default usage period field. */
@@ -83,6 +87,7 @@ public class ServicePackage implements ServicePackageIdentifiable {
 			.map(Formatters::parseDateTime)
 			.orElse(null);
 		description = json.getString(Keys.DESCRIPTION);
+		isActive = json.getBoolean(Keys.IS_ACTIVE);
 		isDefault = json.getBoolean(Keys.IS_DEFAULT);
 		defaultUsagePeriod = json.getInteger(Keys.DEFAULT_USAGE_PERIOD);
 		amount = json.getInteger(Keys.AMOUNT);
@@ -130,6 +135,15 @@ public class ServicePackage implements ServicePackageIdentifiable {
 	 */
 	public String getDescription() {
 		return description;
+	}
+
+	/**
+	 * Indicates whether this package is active.
+	 *
+	 * @return {@code true} when this package is active.
+	 */
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
 	/**
@@ -190,6 +204,9 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		if (null != description) {
 			json.put(Keys.DESCRIPTION, description);
 		}
+		if (null != isActive) {
+			json.put(Keys.IS_ACTIVE, isActive);
+		}
 		if (null != isDefault) {
 			json.put(Keys.IS_DEFAULT, isDefault);
 		}
@@ -233,6 +250,7 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		private Integer productId;
 		private LocalDateTime createdAt;
 		private String description;
+		private Boolean isActive;
 		private Boolean isDefault;
 		private Integer defaultUsagePeriod;
 		private Integer amount;
@@ -247,6 +265,7 @@ public class ServicePackage implements ServicePackageIdentifiable {
 			this.productId = servicePackage.productId;
 			this.createdAt = servicePackage.createdAt;
 			this.description = servicePackage.description;
+			this.isActive = servicePackage.isActive;
 			this.isDefault = servicePackage.isDefault;
 			this.defaultUsagePeriod = servicePackage.defaultUsagePeriod;
 			this.amount = servicePackage.amount;
@@ -309,6 +328,17 @@ public class ServicePackage implements ServicePackageIdentifiable {
 		}
 
 		/**
+		 * Sets active package flag.
+		 *
+		 * @param isActive active flag.
+		 * @return current builder.
+		 */
+		public Builder withIsActive(Boolean isActive) {
+			this.isActive = isActive;
+			return this;
+		}
+
+		/**
 		 * Sets default package flag.
 		 *
 		 * @param isDefault default flag.
@@ -365,7 +395,8 @@ public class ServicePackage implements ServicePackageIdentifiable {
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this).add("id", id).add("name", name).add("productId", productId)
-				.add("createdAt", createdAt).add("description", description).add("isDefault", isDefault)
+				.add("createdAt", createdAt).add("description", description).add("isActive", isActive)
+				.add("isDefault", isDefault)
 				.add("defaultUsagePeriod", defaultUsagePeriod).add("amount", amount)
 				.add("maxAccountUsers", maxAccountUsers).toString();
 	}

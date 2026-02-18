@@ -19,6 +19,7 @@
 	<modules>
 		<module>opinion-catalog-common</module>
 		<module>opinion-catalog-service-package</module>
+		<module>product</module>
 		<module>opinion-catalog</module>
 		<module>coverage-report</module>
 	</modules>

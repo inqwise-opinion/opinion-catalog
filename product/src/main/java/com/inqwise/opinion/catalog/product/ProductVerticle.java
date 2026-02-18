@@ -1,4 +1,4 @@
-package com.inqwise.opinion.catalog.servicepackage;
+package com.inqwise.opinion.catalog.product;
 
 import java.util.List;
 import java.util.Objects;
@@ -19,28 +19,27 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 
 /**
- * ServicePackageVerticle.
+ * ProductVerticle.
  */
-public class ServicePackageVerticle extends VerticleBase {
+public class ProductVerticle extends VerticleBase {
 	/**
 	 * getLogger.
 	 */
-	private static final Logger logger = LogManager.getLogger(ServicePackageVerticle.class);
+	private static final Logger logger = LogManager.getLogger(ProductVerticle.class);
 
 	@Inject
 	private RestApiServerOptions config;
 	@Inject
-	private ServicePackageOpenApiRouterBuilder routerBuilder;
+	private ProductOpenApiRouterBuilder routerBuilder;
 
 	private HttpServer server;
 	private ConfigRetriever retriever;
-	
 	private static final String STORE_KEY = "store";
 
 	/**
-	 * Constructs ServicePackageVerticle.
+	 * Constructs ProductVerticle.
 	 */
-	public ServicePackageVerticle() {
+	public ProductVerticle() {
 	}
 
 	/**
@@ -48,17 +47,18 @@ public class ServicePackageVerticle extends VerticleBase {
 	 */
 	@Override
 	public Future<?> start() throws Exception {
-		logger.info("ServicePackageVerticle - start");
+		logger.info("ProductVerticle - start");
 		logger.debug("config: '{}'", config());
+
 		var storeJson = config().getJsonObject(STORE_KEY);
 		var options = new ConfigRetrieverOptions().setIncludeDefaultStores(true);
-		
-		if(null == storeJson || storeJson.isEmpty()) {
+
+		if (null == storeJson || storeJson.isEmpty()) {
 			options.addStore(new ConfigStoreOptions().setType("json").setConfig(config()));
 		} else {
 			options.addStore(new ConfigStoreOptions(storeJson));
 		}
-		
+
 		retriever = ConfigRetriever.create(vertx, options);
 
 		return retriever.getConfig().compose(configJson -> {
