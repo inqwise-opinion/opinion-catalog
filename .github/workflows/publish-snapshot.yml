@@ -57,15 +57,34 @@ jobs:
           CURRENT_VERSION="${{ steps.snapshot_version.outputs.version }}"
           PREV_VERSION=""
           BEFORE_SHA="${{ github.event.before }}"
-          MAVEN_CMD="${{ steps.maven_cmd.outputs.cmd }}"
 
           if [[ -n "$BEFORE_SHA" && "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ]]; then
             if git cat-file -e "${BEFORE_SHA}:pom.xml" 2>/dev/null; then
-              git show "${BEFORE_SHA}:pom.xml" > /tmp/previous-pom.xml
-              PREV_VERSION=$($MAVEN_CMD -f /tmp/previous-pom.xml help:evaluate -Dexpression=project.version -q -DforceStdout || true)
+              PREV_VERSION=$(
+                git show "${BEFORE_SHA}:pom.xml" | python3 -c '
+import sys
+import xml.etree.ElementTree as ET
+
+xml = sys.stdin.read()
+if not xml.strip():
+    print("")
+    raise SystemExit(0)
+
+root = ET.fromstring(xml)
+if root.tag.startswith("{"):
+    ns_uri = root.tag.split("}", 1)[0][1:]
+    ns = {"m": ns_uri}
+    node = root.find("m:version", ns)
+else:
+    node = root.find("version")
+
+print((node.text or "").strip() if node is not None else "")
+' 2>/dev/null || true
+              )
             fi
           fi
 
+          PREV_VERSION="${PREV_VERSION//$'\n'/}"
           echo "previous_version=$PREV_VERSION" >> $GITHUB_OUTPUT
 
       - name: Read snapshot metadata before deploy
